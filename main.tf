@@ -18,6 +18,13 @@ resource "aws_s3_bucket" "log_bucket" {
   bucket        = "${var.log_bucket_name}"
   policy        = "${var.bucket_policy == "" ? data.aws_iam_policy_document.bucket_policy.json : var.bucket_policy}"
   force_destroy = "${var.force_destroy_log_bucket}"
+  server_side_encryption_configuration {
+      rule {
+        apply_server_side_encryption_by_default {
+          sse_algorithm = "AES256"
+        }
+      }
+  }
   count         = "${var.create_log_bucket ? 1 : 0}"
   tags          = "${merge(var.tags, map("Name", var.log_bucket_name))}"
 }
